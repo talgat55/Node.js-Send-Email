@@ -1,8 +1,23 @@
 import express from 'express';
 import mailer from 'express-mailer';
-const app = express();
+import path from 'path';
+/*import webpack from 'webpack';
+import webpackMiddleware from 'webpack-dev-middleware';
+import config from './webpack.config.js';
+*/
 
-const port = process.env.PORT || 8000;
+let app = express();
+/*const COMPILER = webpack(config);
+app.use(webpackMiddleware(COMPILER));
+*/ 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+let port = process.env.PORT || 3000;
 
 mailer.extend(app, {
     from: 'info@arjunphp.com',
@@ -15,8 +30,7 @@ mailer.extend(app, {
         pass: 'yourPassword'
     }
 });
-
-
+/*
 app.get('/', (req, res) => {
     var mailOptions = {
         to: 'arjunphp@gmail.com',
@@ -38,7 +52,7 @@ app.get('/', (req, res) => {
     });
 
 });
-
+*/
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);
 });
