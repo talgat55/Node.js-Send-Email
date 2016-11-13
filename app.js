@@ -1,6 +1,18 @@
 import express from 'express';
-import mailer from 'express-mailer';
+import mailer from 'express-mailer'; 
+import webpack from 'webpack'; 
+import devMiddleware from 'webpack-dev-middleware';
+import hotMiddleware from 'webpack-hot-middleware';
+import config from './webpack.config';
 const app = express();
+let compiler = webpack(config);
+
+app.use(devMiddleware(compiler, {
+  publicPath: config.output.publicPath,
+  historyApiFallback: true,
+}));
+
+app.use(hotMiddleware(compiler));
 
 const port = process.env.PORT || 8000;
 
@@ -15,8 +27,15 @@ mailer.extend(app, {
         pass: 'yourPassword'
     }
 });
+app.get('*', (req, res) => {
+    res.sendFile(__dirname + "/public/index.html");
 
+});
+app.post('*', (req, res) => {
+    res.send("good");
 
+});
+/*
 app.get('/', (req, res) => {
     var mailOptions = {
         to: 'arjunphp@gmail.com',
@@ -37,7 +56,7 @@ app.get('/', (req, res) => {
         return res.send('Email has been sent!');
     });
 
-});
+});*/
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);
